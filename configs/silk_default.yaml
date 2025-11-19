@@ -1,0 +1,52 @@
+# SILK Model Configuration
+# Based on "SILK: Smooth InterpoLation frameworK for motion in-betweening" (2025)
+
+# Model Architecture
+model:
+  name: "SILK"
+  d_model: 1024              # Model dimension
+  n_layers: 6                # Number of Transformer layers
+  n_heads: 8                 # Number of attention heads
+  d_ff: 4096                 # Feed-forward dimension
+  dropout: 0.0               # No dropout (following TST paper)
+
+# Data
+data:
+  dataset_path: "dataset/ubisoft-laforge-animation-dataset/"
+  train_actors: ["subject1", "subject2", "subject3", "subject4"]
+  test_actors: ["subject5"]
+  window_size: 50            # Total sequence length for training
+  offset: 5                  # Window offset (SILK improvement: 5 instead of 20)
+  context_frames: 1          # Number of context frames (C)
+  min_transition: 5          # Minimum transition length
+  max_transition: 30         # Maximum transition length during training
+  num_joints: 22             # Number of joints in skeleton
+  preload: true              # !! Preload all data to RAM (faster but uses more memory) !!
+
+# Training
+training:
+  batch_size: 64
+  num_epochs: 500
+  learning_rate: 1.0         # Peak learning rate for Noam scheduler (fixed from 1.0)
+  warmup_steps: 8000         # Warmup steps for Noam scheduler
+  grad_clip: 1.0             # Gradient clipping value
+  loss_type: "l1"            # L1 loss
+  num_workers: 0             # Number of data loading workers (0=single process, 4-8=multiprocess)
+
+  # Optimizer (following TST paper)
+  optimizer: "adamw"
+  weight_decay: 0.0  # Paper doesn't specify - likely 0.0 (standard AdamW default is 0.01)
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+
+# Logging
+logging:
+  log_dir: "outputs/logs"
+  checkpoint_dir: "checkpoints"
+  save_every: 10             # Save checkpoint every N epochs
+  eval_every: 1              # Evaluate every N epochs
+  log_every: 10              # Log metrics every N batches
+  use_tensorboard: true
+
+# Reproducibility
+seed: 42
