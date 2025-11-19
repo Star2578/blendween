@@ -13,7 +13,7 @@ import os
 # Add LAFAN1 utilities
 from src.external.lafan1 import utils
 
-from src.data.rotations import rotation_6d_to_quat_numpy
+from src.data_utils.rotations import rotation_6d_to_quat_numpy
 
 
 def reconstruct_global_from_root_space(root_space_features, num_joints=22):

@@ -24,7 +24,7 @@ from pathlib import Path
 import pickle
 
 from src.models.silk import create_silk_model
-from src.data.lafan_dataset import LAFANDataset
+from src.data_utils.lafan_dataset import LAFANDataset
 from src.evaluation.reconstruction import reconstruct_from_model_output
 from src.visualization import create_skeleton_lines
 

@@ -27,7 +27,7 @@ import sys
 
 from src.external.lafan1 import extract, utils
 from src.models.silk import create_silk_model
-from src.data.features import extract_root_space_features_numpy
+from src.data_utils.features import extract_root_space_features_numpy
 from src.evaluation.reconstruction import reconstruct_from_model_output
 
 

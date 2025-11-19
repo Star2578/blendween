@@ -20,7 +20,7 @@ from pathlib import Path
 import pickle
 
 from src.models.silk import create_silk_model
-from src.data.lafan_dataset import LAFANDataset
+from src.data_utils.lafan_dataset import LAFANDataset
 from src.evaluation.metrics import compute_metrics, print_metrics_table, compare_with_paper
 from src.evaluation.reconstruction import reconstruct_from_model_output
 

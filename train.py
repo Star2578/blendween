@@ -20,7 +20,7 @@ import time
 from pathlib import Path
 
 from src.models.silk import create_silk_model
-from src.data.lafan_dataset import create_dataloaders
+from src.data_utils.lafan_dataset import create_dataloaders
 from src.training.losses import create_loss_function
 from src.training.scheduler import create_scheduler
 
