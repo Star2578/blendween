@@ -87,6 +87,12 @@ def create_side_by_side_animation(gt_pos, pred_pos, parents, output_path,
     ax1 = fig.add_subplot(121, projection='3d')
     ax2 = fig.add_subplot(122, projection='3d')
 
+    def _reorient_positions(poses: np.ndarray):
+        return poses[..., [0, 2, 1]]
+
+    gt_pos = _reorient_positions(gt_pos)
+    pred_pos = _reorient_positions(pred_pos)
+
     # Compute global bounds
     all_pos = np.concatenate([gt_pos, pred_pos], axis=0)
     max_range = np.array([
@@ -110,8 +116,8 @@ def create_side_by_side_animation(gt_pos, pred_pos, parents, output_path,
             ax.set_ylim(mid_y - max_range, mid_y + max_range)
             ax.set_zlim(mid_z - max_range, mid_z + max_range)
             ax.set_xlabel('X')
-            ax.set_ylabel('Y')
-            ax.set_zlabel('Z')
+            ax.set_ylabel('Z')
+            ax.set_zlabel('Y')
             ax.view_init(elev=20, azim=45)
 
         # Determine if this is a context or transition frame
@@ -187,6 +193,13 @@ def create_overlay_animation(gt_pos, pred_pos, parents, output_path,
     fig = plt.figure(figsize=(12, 10))
     ax = fig.add_subplot(111, projection='3d')
 
+    # Optionally re-orient coordinates so a different data axis becomes the vertical axis in the plot
+    def _reorient_positions(poses: np.ndarray):
+        return poses[..., [0, 2, 1]]
+
+    gt_pos = _reorient_positions(gt_pos)
+    pred_pos = _reorient_positions(pred_pos)
+
     # Compute global bounds
     all_pos = np.concatenate([gt_pos, pred_pos], axis=0)
     max_range = np.array([
@@ -205,8 +218,8 @@ def create_overlay_animation(gt_pos, pred_pos, parents, output_path,
         ax.set_ylim(mid_y - max_range, mid_y + max_range)
         ax.set_zlim(mid_z - max_range, mid_z + max_range)
         ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
+        ax.set_ylabel('Z')
+        ax.set_zlabel('Y')
         ax.view_init(elev=20, azim=45)
 
         # Determine frame type
@@ -432,7 +445,7 @@ def main(args):
         gt_pos, pred_pos, parents,
         output_path=str(side_by_side_path),
         context_frames=context_frames,
-        fps=args.fps
+        fps=args.fps,
     )
 
     # 2. Overlay animation
@@ -442,7 +455,7 @@ def main(args):
         gt_pos, pred_pos, parents,
         output_path=str(overlay_path),
         context_frames=context_frames,
-        fps=args.fps
+        fps=args.fps,
     )
 
     # 3. Individual animations
@@ -451,12 +464,18 @@ def main(args):
         from src.visualization import plot_motion_sequence
 
         gt_path = output_dir / f'gt_seq{args.sequence_idx}_trans{transition_length}.gif'
-        plot_motion_sequence(gt_pos, parents, fps=args.fps,
+        def _reorient(poses: np.ndarray):
+            return poses[..., [0, 2, 1]]
+
+        gt_pos_plot = _reorient(gt_pos)
+        pred_pos_plot = _reorient(pred_pos)
+
+        plot_motion_sequence(gt_pos_plot, parents, fps=args.fps,
                            output_path=str(gt_path), title="Ground Truth")
 
         pred_path = output_dir / f'pred_seq{args.sequence_idx}_trans{transition_length}.gif'
-        plot_motion_sequence(pred_pos, parents, fps=args.fps,
-                           output_path=str(pred_path), title="SILK Prediction")
+        plot_motion_sequence(pred_pos_plot, parents, fps=args.fps,
+                   output_path=str(pred_path), title="SILK Prediction")
 
     print("\n" + "=" * 70)
     print("Visualization Complete!")
